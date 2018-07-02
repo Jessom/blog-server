@@ -7,10 +7,11 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const db = require('./models/db')
 const { jwtConf } = require('./config')
-const tokenValid = require('./middleware/TokenValid')
+// const tokenValid = require('./middleware/TokenValid')
 const ErrorRouter = require('./middleware/ErrorRouter')
 const jwt = require('koa-jwt')
 
+const basic = require('./routes/basic')
 const index = require('./routes/v1/index')
 
 // error handler
@@ -18,7 +19,14 @@ onerror(app)
 
 // middlewares
 app.use(ErrorRouter)
-app.use(jwt({ secret: jwtConf.secret }).unless({ path: [/\/register/, /\/login/, /\/article/] }))
+app.use(jwt({ secret: jwtConf.secret }).unless({
+  path: [
+    /\/register/, 
+    /\/login/, 
+    /\/article/,
+    /\/upload/
+  ]
+}))
 // app.use(tokenValid)
 app.use(bodyparser({
   enableTypes:['json', 'form', 'text']
@@ -41,6 +49,7 @@ app.use(async (ctx, next) => {
 
 // routes
 app.use(index.routes(), index.allowedMethods())
+app.use(basic.routes(), index.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
