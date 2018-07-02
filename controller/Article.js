@@ -31,7 +31,25 @@ class Article {
 
   // 删除文章
   static async delete(ctx) {
-
+    const { body } = ctx.request
+    if(!body.id) {
+      ctx.status = 400
+      ctx.body = { code: 400, msg: '请填写需要删除的文章id' }
+      return
+    }
+    try {
+      const d = await article.findByIdAndDelete({_id: body.id})
+      console.log(d)
+      if(!!d) {
+        ctx.status = 200
+        ctx.body = { code: 200, msg: '删除成功' }
+      } else {
+        ctx.status = 410
+        ctx.body = { code: 410, msg: '数据不存在' }
+      }
+    } catch (error) {
+      ctx.throw(500)
+    }
   }
 
   // 修改文章
