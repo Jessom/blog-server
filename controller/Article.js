@@ -45,7 +45,7 @@ class Article {
         ctx.body = { code: 200, msg: '删除成功' }
       } else {
         ctx.status = 410
-        ctx.body = { code: 410, msg: '数据不存在' }
+        ctx.body = { code: 410, msg: '文章不存在' }
       }
     } catch (error) {
       ctx.throw(500)
@@ -54,7 +54,19 @@ class Article {
 
   // 修改文章
   static async update(ctx) {
-
+    const { title, content, status, id } = ctx.request.body
+    try {
+      const d = await article.findOneAndUpdate({_id: id}, {title, content, status, lastTime: Date.now()})
+      if(!!d) {
+        ctx.status = 200
+        ctx.body = { code: 200, msg: '修改成功' }
+      } else {
+        ctx.status = 410
+        ctx.body = { code: 410, msg: '文章不存在' }
+      }
+    } catch (error) {
+      ctx.throw(500)
+    }
   }
 
   // 获取文章
@@ -63,7 +75,13 @@ class Article {
       const url = ctx.url
       const id = url.split('/')[url.split('/').length-1]
       let d = await article.findById(id).populate({path: 'author', select: 'name account'})
-      ctx.body = d
+      if(!!d) {
+        ctx.status = 200
+        ctx.body = d
+      } else {
+        ctx.status = 410
+        ctx.body = { code: 410, msg: '文章不存在' }
+      }
     } catch (error) {
       ctx.throw(500)
     }
