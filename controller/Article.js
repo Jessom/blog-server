@@ -41,10 +41,14 @@ class Article {
 
   // 获取文章
   static async gain(ctx) {
-    const url = ctx.url
-    const id = url.split('/')[url.split('/').length-1]
-    const d = await article.findById(id).populate('_uid')
-    ctx.body = d
+    try {
+      const url = ctx.url
+      const id = url.split('/')[url.split('/').length-1]
+      let d = await article.findById(id).populate({path: 'author', select: 'name account'})
+      ctx.body = d
+    } catch (error) {
+      ctx.throw(500)
+    }
   }
 }
 
