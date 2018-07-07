@@ -1,5 +1,6 @@
 const article = require('../models/Schema/Article')
 const Validator = require('../utils/valid')
+const { findByIdAndDelete } = require('./utils')
 
 class Article {
   // 添加文章
@@ -31,25 +32,7 @@ class Article {
 
   // 删除文章
   static async delete(ctx) {
-    const { body } = ctx.request
-    if(!body.id) {
-      ctx.status = 400
-      ctx.body = { code: 400, msg: '请填写需要删除的文章id' }
-      return
-    }
-    try {
-      const d = await article.findByIdAndDelete({_id: body.id})
-      console.log(d)
-      if(!!d) {
-        ctx.status = 200
-        ctx.body = { code: 200, msg: '删除成功' }
-      } else {
-        ctx.status = 410
-        ctx.body = { code: 410, msg: '文章不存在' }
-      }
-    } catch (error) {
-      ctx.throw(500)
-    }
+    findByIdAndDelete(ctx, article)
   }
 
   // 修改文章
@@ -72,8 +55,7 @@ class Article {
   // 获取文章
   static async gain(ctx) {
     try {
-      const url = ctx.url
-      const id = url.split('/')[url.split('/').length-1]
+      const id = ctx.query.id
       let d = await article.findById(id).populate({path: 'author', select: 'name account'})
       if(!!d) {
         ctx.status = 200

@@ -24,7 +24,8 @@ app.use(jwt({ secret: jwtConf.secret }).unless({
     /\/register/, 
     /\/login/, 
     /\/article/,
-    /\/upload/
+    /\/upload/,
+    /\/admin/,
   ]
 }))
 // app.use(tokenValid)
