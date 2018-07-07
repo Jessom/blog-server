@@ -16,7 +16,7 @@ class Auth {
     validator = null
     if(validErr) {
       ctx.status = 400
-      ctx.body = { code: 400, msg: validErr }
+      ctx.body = { msg: validErr }
       return
     }
 
@@ -26,13 +26,12 @@ class Auth {
       let d = await Administrator.findOne({ account: body.account })
       if(d) {
         ctx.status = 406
-        ctx.body = { code: 406, msg: '账号已存在' }
+        ctx.body = { msg: '账号已存在' }
       } else {
         let admin = new Administrator(body)
         await admin.save()
         ctx.status = 200
         ctx.body = {
-          code: 200,
           msg: '注册成功',
           account: body.account,
           name: body.name,
@@ -59,7 +58,7 @@ class Auth {
     validator = null
     if(validErr) {
       ctx.status = 400
-      ctx.body = { code: 400, msg: validErr }
+      ctx.body = { msg: validErr }
       return
     }
 
@@ -67,15 +66,20 @@ class Auth {
       const user = await Administrator.findOne({ account: body.account })
       if(!user) {
         ctx.status = 400
-        ctx.body = { code: 400, msg: '账号不存在' }
+        ctx.body = { msg: '账号不存在' }
         return
       }
       // 比对密码是否正确
       if(user.password === md5(md5(body.password + config.password))) {
+        if(!user.status) {
+          ctx.status = 400
+          ctx.body = { msg: '您的账号已被禁用，请联系超级管理员' }
+          return
+        }
+
         await user.update({ lastTime: Date.now() })
         ctx.status = 200
         ctx.body = {
-          code: 200,
           msg: '登录成功',
           account: user.account,
           name: user.name,
@@ -89,7 +93,7 @@ class Auth {
         }
       } else {
         ctx.status = 401
-        ctx.body = { code: 401, msg: '密码或账号错误' }
+        ctx.body = { msg: '密码或账号错误' }
       }
     } catch (error) {
       ctx.throw(500)

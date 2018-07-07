@@ -6,10 +6,10 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const db = require('./models/db')
-const { jwtConf } = require('./config')
-// const tokenValid = require('./middleware/TokenValid')
+const tokenValid = require('./middleware/TokenValid')
 const ErrorRouter = require('./middleware/ErrorRouter')
-const jwt = require('koa-jwt')
+// const { jwtConf } = require('./config')
+// const jwt = require('koa-jwt')
 
 const basic = require('./routes/basic')
 const index = require('./routes/v1/index')
@@ -18,17 +18,14 @@ const index = require('./routes/v1/index')
 onerror(app)
 
 // middlewares
-app.use(ErrorRouter)
-app.use(jwt({ secret: jwtConf.secret }).unless({
+/* app.use(jwt({ secret: jwtConf.secret }).unless({
   path: [
     /\/register/, 
-    /\/login/, 
-    /\/article/,
-    /\/upload/,
-    /\/admin/,
+    /\/login/
   ]
-}))
-// app.use(tokenValid)
+})) */
+app.use(ErrorRouter)
+app.use(tokenValid)
 app.use(bodyparser({
   enableTypes:['json', 'form', 'text']
 }))

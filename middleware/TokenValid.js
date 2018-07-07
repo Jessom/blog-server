@@ -6,7 +6,12 @@ module.exports = async (ctx, next) => {
   const token = ctx.header.authorization
   if(token) {
     const payload = jsonwebtoken.verify(token, jwtConf.secret)
-    console.log(payload)
+    if(Date.now() > (payload.exp * 1000)) {
+      ctx.status = 401
+      ctx.body = { msg: 'token过期，请重新登录' }
+    } else {
+      await next()
+    }
   } else if(exclude.includes(ctx.request.url)) {
     await next()
   } else {

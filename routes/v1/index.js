@@ -16,7 +16,7 @@ router.get('/article/:id', Article.gain)
 
 // 管理员
 router.post('/admin', Admin.add)
-router.delete('/admin', Admin.delete)
+router.delete('/admin/:id', Admin.delete)
 router.put('/admin', Admin.able)
 router.get('/admin', Admin.getAll)
 

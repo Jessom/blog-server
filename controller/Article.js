@@ -13,7 +13,7 @@ class Article {
     validator = null
     if(validErr) {
       ctx.status = 400
-      ctx.body = { code: 400, msg: validErr }
+      ctx.body = { msg: validErr }
       return
     }
     try {
@@ -21,7 +21,6 @@ class Article {
       await art.save()
       ctx.status = 200
       ctx.body = {
-        code: 200,
         msg: '添加成功'
       }
       art = null
@@ -42,10 +41,10 @@ class Article {
       const d = await article.findOneAndUpdate({_id: id}, {title, content, status, lastTime: Date.now()})
       if(!!d) {
         ctx.status = 200
-        ctx.body = { code: 200, msg: '修改成功' }
+        ctx.body = { msg: '修改成功' }
       } else {
         ctx.status = 410
-        ctx.body = { code: 410, msg: '文章不存在' }
+        ctx.body = { msg: '文章不存在' }
       }
     } catch (error) {
       ctx.throw(500)
@@ -62,7 +61,7 @@ class Article {
         ctx.body = d
       } else {
         ctx.status = 410
-        ctx.body = { code: 410, msg: '文章不存在' }
+        ctx.body = { msg: '文章不存在' }
       }
     } catch (error) {
       ctx.throw(500)

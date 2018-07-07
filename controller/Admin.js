@@ -5,7 +5,7 @@ const jsonwebtoken = require('jsonwebtoken')
 const { config, jwtConf } = require('../config')
 const {
   findByIdAndDelete,
-  findOneAndUpdate,
+  findByIdAndUpdate,
   find
 } = require('./utils')
 
@@ -38,9 +38,14 @@ class Admin {
         await admin.save()
         ctx.status = 200
         ctx.body = {
-          msg: '注册成功',
+          msg: '添加成功',
           account: body.account,
           name: body.name,
+          firstTime: Date.now(),
+          lastTime: Date.now(),
+          status: true,
+          mobile: body.mobile,
+          id: '请刷新页面',
           token: jsonwebtoken.sign({
             account: body.account,
             name: body.name,
@@ -56,17 +61,59 @@ class Admin {
 
   // 删除管理员
   static async delete(ctx) {
-    findByIdAndDelete(ctx, Administrator)
+    const id = ctx.params.id
+    if(!id) {
+      ctx.status = 400
+      ctx.body = { msg: '请输入id' }
+      return
+    }
+    try {
+      const res = findByIdAndDelete(id, Administrator)
+      if(!!res) {
+        ctx.status = 200
+        ctx.body = { msg: '删除成功' }
+      } else {
+        ctx.status = 410
+        ctx.body = { msg: '没有该数据，请重新操作' }
+      }
+    } catch (error) {
+      ctx.throw(500)
+    }
   }
 
   // 禁用/启用 管理员
   static async able(ctx) {
-    findOneAndUpdate(ctx, Administrator)
+    const { body } = ctx.request
+    const id = body.id
+    if(!id) {
+      ctx.status = 400
+      ctx.body = { msg: '请输入id' }
+      return
+    }
+    delete body['id']
+    try {
+      const res = await findByIdAndUpdate(id, body, Administrator)
+      ctx.status = 200
+      ctx.body = { msg: '操作成功' }
+    } catch (error) {
+      ctx.throw(500)
+    }
   }
 
   // 读取管理列表
   static async getAll(ctx) {
-    find(ctx, Administrator)
+    try {
+      const res = await find(ctx, Administrator, {}, 'name account _id account firstTime lastTime status mobile')
+      if(!!res.list) {
+        ctx.status = 200
+        ctx.body = res
+      } else {
+        ctx.status = 410
+        ctx.body = { msg: '暂无数据' }
+      }
+    } catch (error) {
+      ctx.throw(500)
+    }
   }
 }
 
