@@ -5,7 +5,8 @@ const jsonwebtoken = require('jsonwebtoken')
 const { config, jwtConf } = require('../config')
 const {
   findByIdAndDelete,
-  findOneAndUpdate
+  findOneAndUpdate,
+  find
 } = require('./utils')
 
 class Admin {
@@ -65,8 +66,7 @@ class Admin {
 
   // 读取管理列表
   static async getAll(ctx) {
-    ctx.body = { msg: ctx }
-    console.log(ctx.query)
+    find(ctx, Administrator)
   }
 }
 

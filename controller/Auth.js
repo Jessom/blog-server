@@ -72,6 +72,7 @@ class Auth {
       }
       // 比对密码是否正确
       if(user.password === md5(md5(body.password + config.password))) {
+        await user.update({ lastTime: Date.now() })
         ctx.status = 200
         ctx.body = {
           code: 200,
