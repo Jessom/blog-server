@@ -7,6 +7,11 @@ module.exports = (ctx, next) => {
           msg: err.originalError ? err.originalError.message : err.message
         }
         break
+      case 500:
+        ctx.status = 500
+        ctx.body = {
+          msg: '服务端错误'
+        }
       default:
         throw err
     }

@@ -11,7 +11,6 @@ const ErrorRouter = require('./middleware/ErrorRouter')
 // const { jwtConf } = require('./config')
 // const jwt = require('koa-jwt')
 
-const basic = require('./routes/basic')
 const index = require('./routes/v1/index')
 
 // error handler
@@ -47,7 +46,6 @@ app.use(async (ctx, next) => {
 
 // routes
 app.use(index.routes(), index.allowedMethods())
-app.use(basic.routes(), index.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {

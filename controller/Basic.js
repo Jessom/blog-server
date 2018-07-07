@@ -74,16 +74,17 @@ class Basic {
   static async upload(ctx) {
     try {
       const data = new Date()
-      const serverPath = path.join(__dirname, `./uploads/${data.getFullYear()}/${data.getMonth() + 1}/${data.getDate()}/`)
+      const serverPath = path.join(__dirname, `../uploads/`)
       const result = await uploadFile(ctx, { fileType: 'album', path: serverPath })
       const imgPath = path.join(serverPath, result.imgPath)
-      const qiniu = await qiniu.uptoQiniu(imgPath, result.imgKey)
+      const q = await qiniu.uptoQiniu(imgPath, `uploads/${data.getFullYear()}/${data.getMonth() + 1}-${data.getDate()}/${result.imgKey}`)
       removeTemImage(imgPath)
       ctx.status = 200
       ctx.body = {
         code: 200,
         msg: '上传成功',
-        url: `http://p94agf1t4.bkt.clouddn.com/${qiniu.key}`
+        url: `http://p94agf1t4.bkt.clouddn.com/${q.key}`,
+        imgPath
       }
     } catch (error) {
       ctx.throw(500)
