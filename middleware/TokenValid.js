@@ -1,6 +1,6 @@
 const jsonwebtoken = require('jsonwebtoken')
 const { jwtConf } = require('../config')
-const exclude = ['/v1/register', '/v1/login', '/v1/article', '/v1/upload']
+const exclude = ['/v1/register', '/v1/login', '/v1/article', '/v1/logo']
 
 module.exports = async (ctx, next) => {
   const token = ctx.header.authorization

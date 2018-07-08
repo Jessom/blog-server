@@ -70,7 +70,23 @@ const uploadFile = (ctx, options) => {
   })
 }
 
-class Basic {
+module.exports = (ctx) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = new Date()
+      const serverPath = path.join(__dirname, `../uploads/`)
+      const result = await uploadFile(ctx, { fileType: 'album', path: serverPath })
+      const imgPath = path.join(serverPath, result.imgPath)
+      const q = await qiniu.uptoQiniu(imgPath, `uploads/${data.getFullYear()}/${data.getMonth() + 1}-${data.getDate()}/${result.imgKey}`)
+      removeTemImage(imgPath)
+      resolve({ url: `http://p94agf1t4.bkt.clouddn.com/${q.key}` })
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+/* class Basic {
   static async upload(ctx) {
     try {
       const data = new Date()
@@ -92,4 +108,4 @@ class Basic {
   }
 }
 
-module.exports = Basic
+module.exports = Basic */
