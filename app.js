@@ -23,8 +23,8 @@ onerror(app)
     /\/login/
   ]
 })) */
-app.use(ErrorRouter)
 app.use(tokenValid)
+app.use(ErrorRouter)
 app.use(bodyparser({
   enableTypes:['json', 'form', 'text']
 }))

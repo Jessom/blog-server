@@ -1,4 +1,4 @@
-const article = require('../models/Schema/Article')
+const articleModel = require('../models/Schema/Article')
 const Validator = require('../utils/valid')
 const { findByIdAndDelete } = require('./utils')
 
@@ -11,13 +11,17 @@ class Article {
     validator.add(body.content, [{ strategy: 'isNonEmpty', errorMsg: '请填写内容' }])
     let validErr = validator.start()
     validator = null
+    if(body.type != 1 && body.originalText=='') {
+      validErr = '请输入原文地址'
+    }
     if(validErr) {
       ctx.status = 400
       ctx.body = { msg: validErr }
       return
     }
     try {
-      let art = new article(body)
+      console.log(body)
+      let art = new articleModel(body)
       await art.save()
       ctx.status = 200
       ctx.body = {
@@ -31,24 +35,12 @@ class Article {
 
   // 删除文章
   static async delete(ctx) {
-    findByIdAndDelete(ctx, article)
+
   }
 
   // 修改文章
   static async update(ctx) {
-    const { title, content, status, id } = ctx.request.body
-    try {
-      const d = await article.findOneAndUpdate({_id: id}, {title, content, status, lastTime: Date.now()})
-      if(!!d) {
-        ctx.status = 200
-        ctx.body = { msg: '修改成功' }
-      } else {
-        ctx.status = 410
-        ctx.body = { msg: '文章不存在' }
-      }
-    } catch (error) {
-      ctx.throw(500)
-    }
+    
   }
 
   // 获取文章
