@@ -30,7 +30,25 @@ class Type {
 
   // 删除
   static async delete(ctx) {
+    const id = ctx.params.id
+    if(!id) {
+      ctx.status = 400
+      ctx.body = { msg: '请输入id' }
+      return
+    }
 
+    try {
+      let d = await typeModel.findByIdAndDelete(id)
+      if(!d) {
+        ctx.status = 410
+        ctx.body = { msg: '数据不存在' }
+      } else {
+        ctx.status = 200
+        ctx.body = { msg: '删除成功！' }
+      }
+    } catch (error) {
+      ctx.throw(500)
+    }
   }
 
   // 更新
@@ -45,7 +63,7 @@ class Type {
 
     try {
       delete body['id']
-      let d = typeModel.findByIdAndUpdate(id, { $set: body })
+      let d = await typeModel.findByIdAndUpdate(id, { $set: body })
       ctx.status = 200
       ctx.body = {
         msg: '操作成功',
