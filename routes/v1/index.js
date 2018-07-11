@@ -12,9 +12,10 @@ router.post('/login', Auth.login)
 
 // 文章
 router.post('/article', Article.add)
-router.delete('/article', Article.delete)
+router.delete('/article/:id', Article.delete)
 router.put('/article', Article.update)
 router.get('/article/:id', Article.gain)
+router.get('/articles', Article.getAll)
 
 // 管理员
 router.post('/admin', Admin.add)
