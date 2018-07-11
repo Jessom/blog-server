@@ -2,6 +2,7 @@ const router = require('koa-router')()
 const Auth = require('../../controller/Auth')
 const Article = require('../../controller/Article')
 const Admin = require('../../controller/Admin')
+const Type = require('../../controller/Type')
 // const Basic = require('../../controller/Basic')
 const Site = require('../../controller/Site')
 router.prefix('/v1')
@@ -22,6 +23,12 @@ router.post('/admin', Admin.add)
 router.delete('/admin/:id', Admin.delete)
 router.put('/admin', Admin.able)
 router.get('/admin', Admin.getAll)
+
+// 类型
+router.post('/type', Type.add)
+router.delete('/type/:id', Type.delete)
+router.put('/type/:id', Type.update)
+router.get('/type', Type.getAll)
 
 // 上传图片
 // router.post('/upload', Basic.upload)
