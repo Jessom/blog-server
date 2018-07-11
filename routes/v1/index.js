@@ -27,7 +27,7 @@ router.get('/admin', Admin.getAll)
 // 类型
 router.post('/type', Type.add)
 router.delete('/type/:id', Type.delete)
-router.put('/type/:id', Type.update)
+router.put('/type', Type.update)
 router.get('/type', Type.getAll)
 
 // 上传图片

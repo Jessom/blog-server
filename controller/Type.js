@@ -35,7 +35,25 @@ class Type {
 
   // 更新
   static async update(ctx) {
+    const { body } = ctx.request
+    const id = body.id
+    if(!id) {
+      ctx.status = 400
+      ctx.body = { msg: '请输入id' }
+      return
+    }
 
+    try {
+      delete body['id']
+      let d = typeModel.findByIdAndUpdate(id, { $set: body })
+      ctx.status = 200
+      ctx.body = {
+        msg: '操作成功',
+        ...d._doc
+      }
+    } catch (error) {
+      ctx.throw(500)
+    }
   }
 
   // 获取
